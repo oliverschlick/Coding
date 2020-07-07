@@ -3,14 +3,15 @@ import cv2 as cv
 import numpy as np
 from matplotlib import pyplot as plt
 import os, sys
-img= Image.open(r'C:\Users\hggag\Desktop\test2.jpg')
+img= cv.imread(r"C:\Users\hggag\Desktop\gray.jpg",0)
 
-#imgBlur=cv.GaussianBlur(cv.imread(r"C:\Users\hggag\Desktop\test2.jpg"), (7,7),1)
-#imgGray=cv.cvtColor(imgBlur, cv.COLOR_BGR2GRAY)
 
-#cv.imwrite(r"C:\Users\hggag\Desktop\gray.jpg", imgGray)
-img.save('okay.png')
-data= img.getdata()
+imgBlur=cv.GaussianBlur(cv.imread(r"C:\Users\hggag\Desktop\test1.jpg"), (7,7),1)
+imgGray=cv.cvtColor(imgBlur, cv.COLOR_BGR2GRAY)
+
+cv.imwrite(r"C:\Users\hggag\Desktop\gray.jpg", imgGray)
+"""j
+data=img.getdata()
 r = [(d[0], d[0], d[0]) for d in data]
 g = [(d[1], d[1], d[1]) for d in data]
 b = [(d[2], d[2], d[2]) for d in data]
@@ -21,48 +22,51 @@ img.putdata(g)
 img.save('g.png')
 img.putdata(b)
 img.save('b.png')
+"""
 
-
-img1 =cv.imread(r"b.png",0)
+img1 =cv.imread(r"r.png",0)
+cv.imshow("window", img)
+cv.waitKey(0)
 
 
 def nothing(x):
     pass
 
-cv.namedWindow("Tracking")
-cv.createTrackbar("LH", "Tracking", 0, 255, nothing)
-cv.createTrackbar("LS", "Tracking", 0, 255, nothing)
-cv.createTrackbar("LV", "Tracking", 0, 255, nothing)
+# Create a black image, a window
+img2 = np.zeros((300,512,3), np.uint8)
 
-cv.createTrackbar("UH", "Tracking", 255, 255, nothing)
-cv.createTrackbar("US", "Tracking", 255, 255, nothing)
-cv.createTrackbar("UV", "Tracking", 255, 255, nothing)
+print(type(img1))
+cv.namedWindow('window')
 
+# create trackbars for color change
+cv.createTrackbar('R','window',0,255,nothing)
+cv.createTrackbar('G','window',0,255,nothing)
+cv.createTrackbar('B','window',0,255,nothing)
 
-while True:
-    frame = cv.imread('okay.png')
-    hsv= cv.cvtColor(frame, cv.COLOR_BGR2HSV)
+# create switch for ON/OFF functionality
+switch = '0 : OFF \n1 : ON'
+cv.createTrackbar(switch, 'window',0,1,nothing)
 
-    l_h =cv.getTrackbarPos("LH", "Tracking")
-    l_s =cv.getTrackbarPos("LS", "Tracking")
-    l_v =cv.getTrackbarPos("LV", "Tracking")
-
-    u_h =cv.getTrackbarPos("UH", "Tracking")
-    u_s =cv.getTrackbarPos("US", "Tracking")
-    u_v =cv.getTrackbarPos("UV", "Tracking")
-
-    l_b =np.array([l_h, l_s, l_v])
-    u_b = np.array([u_h, u_s, u_v])
-    okay =cv.inRange(hsv, l_b, u_b)
-    res=cv.bitwise_and(frame,frame,mask=okay)
-    cv.imshow("frame",frame)
-    cv.waitKey(0)
-    key=cv.waitKey(3) & 0xFF
-    if key==27:
+while(1):
+    cv.imshow('window', img)
+    k = cv.waitKey(3) & 0xFF
+    if k == 27:
         break
 
-cv.destroyAllWindows()
+    # get current positions of four trackbars
+    r = cv.getTrackbarPos('R','window')
+    g = cv.getTrackbarPos('G','window')
+    b = cv.getTrackbarPos('B','window')
+    s = cv.getTrackbarPos(switch,'window')
 
+
+    if s == 0:
+        img[:] = 0
+    else:
+        img[:] = [b,g,r]
+
+cv2.destroyAllWindows()
+"""
 _, th1 = cv.threshold(img1, 230, 255, cv.THRESH_BINARY)
 
 median =cv.medianBlur(th1, 7)
@@ -114,4 +118,4 @@ for i in range(len(titles)):
 plt.show()
 cv.waitKey(0)
 cv.destroyAllWindows()
-
+"""
